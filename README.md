@@ -1,7 +1,27 @@
-# Tauri + SvelteKit + TypeScript
+# AI Overflow
 
-This template should help get you started developing with Tauri, SvelteKit and TypeScript in Vite.
+This is a simple context manager for AI agents that mimics a Stack Overflow
+style Q&A. You can add /clear at any time to reset the context and ask a new
+question. All previous questions are automatically preserved within your
+session, and you can spin up multiple sessions.
 
-## Recommended IDE Setup
+Currently, this supports Ollama and Claude as harnesses. Gemini is WIP. 
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer).
+## Running the app
+
+Run the following:
+```bash
+
+# install all dependencies
+pnpm i
+
+# create the standalone application for use
+pnpm tauri build
+```
+
+## Local development
+
+```bash
+pnpm i
+pnpm tauri dev
+```
