@@ -7,6 +7,8 @@ session, and you can spin up multiple sessions.
 
 Currently, this supports Ollama and Claude as harnesses. Gemini is WIP. 
 
+![example of AI Overflow in action](demo.png)
+
 ## Running the app
 
 Run the following:
