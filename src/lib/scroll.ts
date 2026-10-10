@@ -1,20 +1,20 @@
 /**
- * The DOM id of an exchange's response block in the feed.
+ * The DOM id of an exchange's block in the feed.
  * @param exchangeId - the exchange.
  * @returns the element id.
  */
-export function responseElementId(exchangeId: string): string {
-  return `response-${exchangeId}`;
+export function exchangeElementId(exchangeId: string): string {
+  return `exchange-${exchangeId}`;
 }
 
 /**
- * Scrolls the feed so the top of a response sits at the top of the view, keeping the
- * beginning of the answer in place while the rest streams in below.
- * @param exchangeId - the exchange whose response to reveal.
- * @param smooth - animate the scroll (for new answers) or jump (when opening a context).
+ * Scrolls the feed so an exchange's question sits at the top of the view, keeping the
+ * message the user just sent in place while its response streams in below.
+ * @param exchangeId - the exchange whose question to reveal.
+ * @param smooth - animate the scroll (for new questions) or jump (when opening a context).
  */
-export function scrollToResponse(exchangeId: string, smooth: boolean) {
+export function scrollToExchange(exchangeId: string, smooth: boolean) {
   document
-    .getElementById(responseElementId(exchangeId))
+    .getElementById(exchangeElementId(exchangeId))
     ?.scrollIntoView({ behavior: smooth ? 'smooth' : 'instant', block: 'start' });
 }

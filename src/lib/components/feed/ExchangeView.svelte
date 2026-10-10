@@ -1,6 +1,6 @@
 <!-- One question and its streamed reply: tools used, reasoning, answer and status. -->
 <script lang="ts">
-  import { responseElementId } from '$lib/scroll';
+  import { exchangeElementId } from '$lib/scroll';
   import type { Exchange } from '$lib/types';
   import ExchangeMeta from './ExchangeMeta.svelte';
   import Markdown from './Markdown.svelte';
@@ -10,10 +10,10 @@
   const waiting = $derived(exchange.status === 'streaming' && !exchange.answer);
 </script>
 
-<article>
+<!-- The latest exchange is at least a screen tall so its question can always scroll to the top. -->
+<article class:latest id={exchangeElementId(exchange.id)}>
   <div class="question">{exchange.question}</div>
-  <!-- The latest response is at least a screen tall so its top can always scroll to the top. -->
-  <div class="response" class:latest id={responseElementId(exchange.id)}>
+  <div class="response">
     {#each exchange.tools as tool, i (i)}
       <div class="tool">⚒ {tool.name}: {tool.detail}</div>
     {/each}
@@ -35,6 +35,11 @@
 <style>
   article {
     margin-bottom: 22px;
+    scroll-margin-top: 12px;
+  }
+
+  article.latest {
+    min-height: calc(var(--feed-height) - 12px);
   }
 
   .question {
@@ -44,14 +49,6 @@
     background: var(--bg-question);
     white-space: pre-wrap;
     word-break: break-word;
-  }
-
-  .response {
-    scroll-margin-top: 12px;
-  }
-
-  .response.latest {
-    min-height: calc(var(--feed-height) - 12px);
   }
 
   .tool {
