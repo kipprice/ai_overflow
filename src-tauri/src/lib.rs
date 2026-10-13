@@ -7,9 +7,11 @@ mod events;
 mod focus;
 mod ollama;
 mod requests;
+mod resolution;
 mod storage;
 #[cfg(test)]
 mod tests;
+mod text;
 mod theme;
 
 /// Builds and runs the Tauri application.
@@ -25,11 +27,13 @@ pub fn run() {
             requests::cancel_request,
             claude::chat::claude_send,
             claude::theme::claude_theme,
+            claude::resolution::claude_resolution,
             claude::status::claude_status,
             ollama::chat::ollama_chat,
             ollama::models::ollama_models,
             ollama::models::ollama_model_info,
             ollama::theme::ollama_theme,
+            ollama::resolution::ollama_resolution,
             storage::load_data,
             storage::save_data,
             storage::default_workspace,

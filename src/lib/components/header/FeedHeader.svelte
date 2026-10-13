@@ -1,21 +1,24 @@
 <!-- Bar above the feed: harness, model and effort pickers, plus appearance and settings buttons. -->
 <script lang="ts">
-  import { HARNESSES } from '$lib/models';
-  import { store, updateSettings } from '$lib/state/store.svelte';
-  import type { Harness } from '$lib/types';
-  import AppearanceToggle from './AppearanceToggle.svelte';
-  import EffortPicker from './EffortPicker.svelte';
-  import ModelPicker from './ModelPicker.svelte';
+  import { HARNESSES } from "$lib/models";
+  import { store, updateSettings } from "$lib/state/store.svelte";
+  import type { Harness } from "$lib/types";
+  import AppearanceToggle from "./AppearanceToggle.svelte";
+  import EffortPicker from "./EffortPicker.svelte";
+  import ModelPicker from "./ModelPicker.svelte";
 
   let { onOpenSettings }: { onOpenSettings: () => void } = $props();
 </script>
+
+<!----------------------------------------------------------------------------->
 
 <header>
   <label>
     <span>Harness</span>
     <select
       value={store.data.settings.harness}
-      onchange={(e) => updateSettings({ harness: e.currentTarget.value as Harness })}
+      onchange={(e) =>
+        updateSettings({ harness: e.currentTarget.value as Harness })}
     >
       {#each HARNESSES as harness (harness.id)}
         <option value={harness.id}>{harness.label}</option>
@@ -26,11 +29,18 @@
   <EffortPicker />
   <div class="actions">
     <AppearanceToggle />
-    <button class="icon-button settings" onclick={onOpenSettings} title="Settings" aria-label="Settings">
+    <button
+      class="icon-button settings"
+      onclick={onOpenSettings}
+      title="Settings"
+      aria-label="Settings"
+    >
       ⚙
     </button>
   </div>
 </header>
+
+<!----------------------------------------------------------------------------->
 
 <style>
   header {

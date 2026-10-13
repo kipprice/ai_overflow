@@ -1,3 +1,5 @@
+import type { Resolution } from './resolution';
+
 /** The backend that answers questions. */
 export type Harness = 'claude' | 'ollama';
 
@@ -15,12 +17,15 @@ export interface Exchange {
   thinking: string;
   tools: ToolCall[];
   harness: Harness;
+  /** Model that answered; empty when the user answered it themselves. */
   model: string;
   /** Effort level used; empty string means the harness default. */
   effort: string;
   createdAt: number;
   status: 'streaming' | 'done' | 'error';
   error?: string;
+  /** Set when the user wrote the answer themselves, so no model was asked. */
+  selfAnswered?: boolean;
 }
 
 /**
@@ -39,44 +44,14 @@ export interface Topic {
   exchanges: Exchange[];
   /** Claude CLI session to resume for the next turn in this context. */
   claudeSessionId?: string;
+  /** Set once the user has marked the question answered. */
+  resolution?: Resolution;
+  /** Context this one continues, when it was started by forking a resolved question. */
+  forkedFromId?: string;
 }
 
 /** A group of topics shown together in the sidebar. */
 export interface Session {
   id: string;
   createdAt: number;
-}
-
-/** Colour scheme: follow macOS, or force light or dark. */
-export type Appearance = 'system' | 'light' | 'dark';
-
-/** User preferences, persisted alongside the feed. */
-export interface Settings {
-  appearance: Appearance;
-  harness: Harness;
-  claudeModel: string;
-  claudeEffort: string;
-  ollamaModel: string;
-  ollamaEffort: string;
-  themeHarness: Harness;
-  themeClaudeModel: string;
-  themeOllamaModel: string;
-  ollamaUrl: string;
-  /** Explicit path to the `claude` CLI; blank means auto-detect. */
-  claudePath: string;
-  /** Working folder for Claude; blank means the app's private workspace. */
-  claudeCwd: string;
-}
-
-/** Everything persisted to disk. */
-export interface AppData {
-  version: 1;
-  settings: Settings;
-  sessions: Session[];
-  topics: Topic[];
-  currentSessionId: string;
-  /** The context shown in the feed; `null` for a fresh context with no questions yet. */
-  currentTopicId: string | null;
-  /** Slash commands last reported by the Claude CLI. */
-  claudeCommands: string[];
 }

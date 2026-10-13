@@ -14,6 +14,11 @@
   --accent-ink: var(--text);
   --accent-wash: var(--accent);
   --accent-overlay: #1cfeba22;
+  /* Ink for text sitting on a solid accent fill. The accent is a light mint in both
+     schemes, so this stays dark either way. */
+  --on-accent: #10211c;
+  /* Dropshadow that reads against the page: black in light mode, white in dark. */
+  --shadow-ink: rgba(0, 0, 0, 0.45);
   --danger: #b91c1c;
   --dot-inactive: rgba(0, 0, 0, 0.22);
   --code-bg: #f1efe9;
@@ -37,6 +42,7 @@
   --text-muted: #9a968d;
   --accent-ink: var(--accent);
   --accent-wash: transparent;
+  --shadow-ink: rgba(255, 255, 255, 0.4);
   --danger: #f87171;
   --dot-inactive: rgba(255, 255, 255, 0.35);
   --code-bg: #26251f;
@@ -82,19 +88,4 @@ input[type="text"] {
   padding: 3px 6px;
 }
 
-button {
-  cursor: pointer;
-}
-
-.icon-button {
-  background: none;
-  border: none;
-  border-radius: 6px;
-  padding: 2px 6px;
-  color: var(--text-muted);
-}
-
-.icon-button:hover {
-  background: var(--bg-hover);
-  color: var(--text);
-}
+/* Button utilities live in `styles/buttons.css`, imported by the root layout. */

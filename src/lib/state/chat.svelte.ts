@@ -3,9 +3,13 @@ import { cancelRequest, claudeSend, ollamaSend } from '$lib/ipc/harness';
 import { ollamaThink } from '$lib/models';
 import type { Exchange, Topic } from '$lib/types';
 import { applyEvent } from './apply-event';
-import { claudeCwd, scheduleSave, store } from './store.svelte';
+import { contextExchanges } from './forking';
+import { runLocalCommand } from './local-commands';
 import { nameTopic } from './naming';
-import { currentTopic, deleteTopic, newContext, startTopic } from './topics';
+import { newExchange } from './new-exchange';
+import { discardResolution } from './resolution-state';
+import { claudeCwd, scheduleSave, store } from './store.svelte';
+import { currentTopic, deleteTopic, startTopic } from './topics';
 import { claudePrompt, isFirstQuestion, ollamaMessages } from './transcript';
 
 /** The turn currently streaming, if any. */
@@ -14,23 +18,24 @@ export const turn = $state({ requestId: null as string | null });
 let current: { exchange: Exchange; topic: Topic; unsubscribe: () => void } | null = null;
 
 /**
- * Sends the composer's text: `/clear` starts a new context, anything else (including other
- * slash commands) goes to the selected harness. The first real question of a context also
- * kicks off naming its theme.
+ * Sends the composer's text. Text the app handles itself (`/clear`, `@resolved`) never
+ * reaches a harness; anything else, including other slash commands, goes to the selected
+ * one. The first real question of a context also kicks off naming its theme.
  * @param text - the composer text.
  * @returns true if the text was accepted and the composer should be emptied.
  */
 export async function send(text: string): Promise<boolean> {
   const question = text.trim();
   if (!question || turn.requestId) return false;
-  if (question === '/clear') {
-    newContext();
-    return true;
-  }
+  const local = runLocalCommand(question);
+  if (local !== 'none') return local === 'accepted';
   const topic = currentTopic() ?? startTopic();
-  const prior = [...topic.exchanges];
+  // The theme is named from this context's own first question, but the model is sent the
+  // whole conversation, which for a fork reaches back into the context it continues.
+  const own = [...topic.exchanges];
+  const prior = contextExchanges(topic);
   topic.exchanges.push(newExchange(question));
-  if (isFirstQuestion(prior, question)) void nameTopic(topic);
+  if (isFirstQuestion(own, question)) void nameTopic(topic);
   const exchange = topic.exchanges[topic.exchanges.length - 1];
   const requestId = crypto.randomUUID();
   turn.requestId = requestId;
@@ -56,7 +61,14 @@ export function cancel(): string | null {
   void cancelRequest(turn.requestId);
   finishTurn();
   topic.exchanges = topic.exchanges.filter((e) => e.id !== exchange.id);
-  if (topic.exchanges.length === 0) deleteTopic(topic.id);
+  // An answer accepted from the part that had streamed goes with the exchange it came from;
+  // left behind, it would hold the context resolved by an answer no longer in the feed.
+  if (topic.resolution?.exchangeId === exchange.id) discardResolution(topic);
+  if (topic.exchanges.length === 0) {
+    // Put a fork back in play, so retyping the question still continues what it came from.
+    if (topic.forkedFromId) store.data.forkFromTopicId = topic.forkedFromId;
+    deleteTopic(topic.id);
+  }
   scheduleSave();
   return exchange.question;
 }
@@ -78,22 +90,4 @@ function finishTurn() {
   current = null;
   turn.requestId = null;
   scheduleSave();
-}
-
-/** Creates the exchange record for a new question using the current settings. */
-function newExchange(question: string): Exchange {
-  const s = store.data.settings;
-  const isClaude = s.harness === 'claude';
-  return {
-    id: crypto.randomUUID(),
-    question,
-    answer: '',
-    thinking: '',
-    tools: [],
-    harness: s.harness,
-    model: isClaude ? s.claudeModel : s.ollamaModel,
-    effort: isClaude ? s.claudeEffort : s.ollamaEffort,
-    createdAt: Date.now(),
-    status: 'streaming',
-  };
 }

@@ -1,7 +1,7 @@
 //! Builds and launches `claude` CLI processes.
 
 use crate::env::{login_path, resolve_claude};
-use crate::{focus, theme};
+use crate::focus;
 use std::process::Stdio;
 use tokio::io::AsyncWriteExt;
 use tokio::process::{Child, Command};
@@ -74,19 +74,20 @@ pub fn chat_args(model: &str, effort: Option<&str>, resume: Option<&str>) -> Vec
     args
 }
 
-/// Arguments for a cheap, one-shot theme request.
+/// Arguments for a cheap, one-shot helper request (a theme label or resolution summary).
 ///
 /// Replaces the Claude Code system prompt and disables tools, MCP, settings and sessions,
 /// which cuts the cost of a Haiku call to a fraction of a cent.
 ///
 /// # Arguments
 /// * `model` - the model id.
+/// * `system` - the system prompt for the task.
 ///
 /// # Returns
 /// The argument list.
-pub fn theme_args(model: &str) -> Vec<String> {
+pub fn oneshot_args(model: &str, system: &str) -> Vec<String> {
     strings(&[
-        "-p", "--model", model, "--system-prompt", theme::SYSTEM_PROMPT,
+        "-p", "--model", model, "--system-prompt", system,
         "--tools", "", "--strict-mcp-config", "--no-session-persistence",
         "--setting-sources", "", "--disable-slash-commands", "--output-format", "json",
     ])

@@ -4,18 +4,27 @@
     items,
     selected,
     onPick,
-  }: { items: string[]; selected: number; onPick: (command: string) => void } = $props();
+  }: { items: string[]; selected: number; onPick: (command: string) => void } =
+    $props();
 </script>
+
+<!----------------------------------------------------------------------------->
 
 <ul role="listbox">
   {#each items as command, i (command)}
     <li role="option" aria-selected={i === selected}>
-      <button class:selected={i === selected} onmousedown={(e) => e.preventDefault()} onclick={() => onPick(command)}>
+      <button
+        class:selected={i === selected}
+        onmousedown={(e) => e.preventDefault()}
+        onclick={() => onPick(command)}
+      >
         /{command}
       </button>
     </li>
   {/each}
 </ul>
+
+<!----------------------------------------------------------------------------->
 
 <style>
   ul {

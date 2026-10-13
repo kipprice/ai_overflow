@@ -4,21 +4,22 @@ import { scheduleSave, store } from './store.svelte';
 import { isSlashCommand } from './transcript';
 
 /**
- * Asks the theme model to label a topic from its first (non-slash) question, falling back to the
- * question itself on failure. If the user renames the topic while this runs, their name wins.
+ * Asks the theme model to label a topic from its first (non-slash) question — or from the
+ * answer, when that exchange has no question — falling back to that same text on failure. If
+ * the user renames the topic while this runs, their name wins.
  * @param topic - the (reactive) topic to name.
  * @returns resolves once the topic has a theme.
  */
 export async function nameTopic(topic: Topic) {
-  const question = topic.exchanges.find((e) => !isSlashCommand(e.question))?.question ?? '';
+  const subject = namingSubject(topic);
   topic.themeStatus = 'pending';
   let theme: string;
   let failed = false;
   try {
-    theme = await extractTheme(store.data.settings, question);
+    theme = await extractTheme(store.data.settings, subject);
   } catch (err) {
     console.warn('Theme extraction failed', err);
-    theme = fallbackTheme(question);
+    theme = fallbackTheme(subject);
     failed = true;
   }
   if (topic.themeStatus !== 'pending') return;
@@ -45,8 +46,19 @@ export function resumePendingThemes() {
   store.data.topics.filter((t) => t.themeStatus === 'pending').forEach((t) => void nameTopic(t));
 }
 
-/** A readable label built from the question, used when the theme model fails. */
-function fallbackTheme(question: string): string {
-  const text = question.replace(/\s+/g, ' ').trim() || 'Untitled';
+/**
+ * The text a topic's theme is named from: its first real question, or that exchange's answer
+ * when it has no question of its own. A context resolved with a bare `@resolved note` records
+ * only the note, and a theme taken from it beats leaving the context unnamed.
+ */
+function namingSubject(topic: Topic): string {
+  const first = topic.exchanges.find((e) => !isSlashCommand(e.question));
+  if (!first) return '';
+  return first.question || first.answer;
+}
+
+/** A readable label built from the naming subject, used when the theme model fails. */
+function fallbackTheme(subject: string): string {
+  const text = subject.replace(/\s+/g, ' ').trim() || 'Untitled';
   return text.length > 40 ? `${text.slice(0, 40)}…` : text;
 }

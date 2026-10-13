@@ -23,3 +23,23 @@ Tauri 2 desktop app (Rust backend in `src-tauri/`, SvelteKit + Svelte 5 frontend
 - Document every exported function, class and store with a `/** */` JSDoc comment covering what it does and why, `@param` for each argument, and `@returns` when it returns a value.
 - Every component begins with a short `<!-- -->` comment describing its responsibility, and its props are typed.
 - Keep components presentational where possible: state and side effects (persistence, IPC, streaming) live in `.svelte.ts` / `.ts` modules under `src/lib/`, not in component markup.
+- .svelte files should separate their script and style sections from the
+  component body via
+  `<!----------------------------------------------------------------------------->`.
+  Each component should follow the following pattern:
+
+  ```svelte
+<script lang='ts'>
+  // ...
+</script>
+
+<!----------------------------------------------------------------------------->
+
+<!-- body goes here -->
+
+<!----------------------------------------------------------------------------->
+
+<style>
+/** ... */
+</style>
+```

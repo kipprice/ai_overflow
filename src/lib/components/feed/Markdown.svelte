@@ -1,16 +1,20 @@
 <!-- Renders sanitised markdown from a model answer. -->
 <script lang="ts">
-  import { renderMarkdown } from '$lib/markdown';
+  import { renderMarkdown } from "$lib/markdown";
 
   let { text }: { text: string } = $props();
 
   const html = $derived(renderMarkdown(text));
 </script>
 
+<!----------------------------------------------------------------------------->
+
 <div class="markdown">
   <!-- Safe: renderMarkdown sanitises with DOMPurify. -->
   {@html html}
 </div>
+
+<!----------------------------------------------------------------------------->
 
 <style>
   .markdown {

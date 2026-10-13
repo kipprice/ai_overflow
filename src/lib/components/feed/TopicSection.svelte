@@ -1,25 +1,55 @@
-<!-- The current context: its theme heading followed by each exchange. -->
+<!-- The current context: its theme heading, a reopened question's former resolution, then
+     each exchange. A standing resolution isn't shown here — it is pinned below the feed. -->
 <script lang="ts">
-  import { topicLabel } from '$lib/topic-label';
-  import type { Topic } from '$lib/types';
-  import ExchangeView from './ExchangeView.svelte';
+  import PastResolution from "$lib/components/resolution/PastResolution.svelte";
+  import { discardResolution } from "$lib/state/resolution-state";
+  import { topicLabel } from "$lib/topic-label";
+  import type { Acceptance, Exchange, Topic } from "$lib/types";
+  import ExchangeView from "./ExchangeView.svelte";
 
   let { topic }: { topic: Topic } = $props();
 
   const started = $derived(
-    new Date(topic.createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }),
+    new Date(topic.createdAt).toLocaleString(undefined, {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }),
   );
+  const reopened = $derived(
+    topic.resolution?.state === "reopened" ? topic.resolution : undefined,
+  );
+
+  /** How an exchange relates to the context's resolution, which decides how it's marked. */
+  function acceptanceOf(exchange: Exchange): Acceptance {
+    const resolution = topic.resolution;
+    if (resolution?.exchangeId !== exchange.id) return "none";
+    return resolution.state === "active" ? "current" : "past";
+  }
 </script>
+
+<!----------------------------------------------------------------------------->
 
 <section>
   <h2>
     <span>{topicLabel(topic)}</span>
     <time>{started}</time>
   </h2>
+  {#if reopened}
+    <PastResolution
+      resolution={reopened}
+      onDiscard={() => discardResolution(topic)}
+    />
+  {/if}
   {#each topic.exchanges as exchange, i (exchange.id)}
-    <ExchangeView {exchange} latest={i === topic.exchanges.length - 1} />
+    <ExchangeView
+      {exchange}
+      latest={i === topic.exchanges.length - 1}
+      acceptance={acceptanceOf(exchange)}
+    />
   {/each}
 </section>
+
+<!----------------------------------------------------------------------------->
 
 <style>
   section {

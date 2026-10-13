@@ -1,0 +1,48 @@
+/* Button utilities shared across components. They live here, rather than in a component's
+   scoped styles, because the button and the surface it sits on are often separate
+   components. */
+
+button {
+  cursor: pointer;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  border-radius: 6px;
+  padding: 2px 6px;
+  color: var(--text-muted);
+}
+
+.icon-button:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+/* Buttons sitting on a solid accent fill, as in the resolution bar. */
+.accent-button {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  border: 1px solid var(--on-accent);
+  border-radius: 6px;
+  padding: 4px 12px;
+  background: transparent;
+  color: var(--on-accent);
+  font-size: 12.5px;
+}
+
+.accent-button:hover {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+/* The one action a row leads with. */
+.accent-button.filled {
+  background: var(--on-accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.accent-button.filled:hover {
+  opacity: 0.85;
+}

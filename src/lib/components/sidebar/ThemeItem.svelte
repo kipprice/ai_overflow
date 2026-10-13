@@ -1,8 +1,8 @@
 <!-- One theme in the sidebar: opens its context, renames it on double-click, and can
      permanently delete it (two clicks). -->
 <script lang="ts">
-  import { store } from "$lib/state/store.svelte";
   import { nameTopic } from "$lib/state/naming";
+  import { store } from "$lib/state/store.svelte";
   import { deleteTopic, selectTopic } from "$lib/state/topics";
   import { topicLabel } from "$lib/topic-label";
   import type { Topic } from "$lib/types";
@@ -12,6 +12,8 @@
   let confirming = $state(false);
   let renaming = $state(false);
 </script>
+
+<!----------------------------------------------------------------------------->
 
 <div
   role="group"
@@ -32,10 +34,15 @@
     </button>
   {/if}
   {#if topic.themeStatus === "failed"}
-    <button class="icon-button" onclick={() => nameTopic(topic)} title="Retry naming">↻</button>
+    <button
+      class="icon-button"
+      onclick={() => nameTopic(topic)}
+      title="Retry naming">↻</button
+    >
   {/if}
   {#if confirming}
-    <button class="confirm" onclick={() => deleteTopic(topic.id)}>Delete</button>
+    <button class="confirm" onclick={() => deleteTopic(topic.id)}>Delete</button
+    >
   {:else}
     <button
       class="icon-button remove"
@@ -47,6 +54,8 @@
     </button>
   {/if}
 </div>
+
+<!----------------------------------------------------------------------------->
 
 <style>
   .item {

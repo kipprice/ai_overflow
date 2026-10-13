@@ -36,6 +36,7 @@ export function freshData(): AppData {
     topics: [],
     currentSessionId: session.id,
     currentTopicId: null,
+    forkFromTopicId: null,
     claudeCommands: [],
   };
 }
@@ -51,9 +52,12 @@ export function restoreData(json: string | null): AppData {
   const data = JSON.parse(json) as AppData;
   data.settings = { ...DEFAULT_SETTINGS, ...data.settings };
   data.currentTopicId ??= null;
+  data.forkFromTopicId ??= null;
   for (const topic of data.topics) {
     // Contexts saved before naming moved to the first question have no theme yet.
     if (!topic.theme && topic.themeStatus !== 'failed') topic.themeStatus = 'pending';
+    // Resolutions saved before questions could be reopened all still stand.
+    if (topic.resolution) topic.resolution.state ??= 'active';
   }
   for (const exchange of data.topics.flatMap((t) => t.exchanges)) {
     if (exchange.status === 'streaming') {

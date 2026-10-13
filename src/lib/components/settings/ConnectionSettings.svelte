@@ -1,11 +1,11 @@
 <!-- Where to find each harness: the Claude CLI and its working folder, and the Ollama server. -->
 <script lang="ts">
-  import { claudeStatus } from '$lib/ipc/system';
-  import { refreshOllamaModels, ollama } from '$lib/state/ollama.svelte';
-  import { store, updateSettings } from '$lib/state/store.svelte';
+  import { claudeStatus } from "$lib/ipc/system";
+  import { ollama, refreshOllamaModels } from "$lib/state/ollama.svelte";
+  import { store, updateSettings } from "$lib/state/store.svelte";
 
   const settings = $derived(store.data.settings);
-  let cliStatus = $state('Checking…');
+  let cliStatus = $state("Checking…");
 
   $effect(() => {
     claudeStatus(settings.claudePath)
@@ -19,6 +19,8 @@
   }
 </script>
 
+<!----------------------------------------------------------------------------->
+
 <fieldset>
   <legend>Claude</legend>
   <label>
@@ -27,7 +29,8 @@
       type="text"
       value={settings.claudePath}
       placeholder="Auto-detect"
-      onchange={(e) => updateSettings({ claudePath: e.currentTarget.value.trim() })}
+      onchange={(e) =>
+        updateSettings({ claudePath: e.currentTarget.value.trim() })}
     />
   </label>
   <p class="note">{cliStatus}</p>
@@ -37,7 +40,8 @@
       type="text"
       value={settings.claudeCwd}
       placeholder={store.workspace}
-      onchange={(e) => updateSettings({ claudeCwd: e.currentTarget.value.trim() })}
+      onchange={(e) =>
+        updateSettings({ claudeCwd: e.currentTarget.value.trim() })}
     />
   </label>
 </fieldset>
@@ -46,9 +50,15 @@
   <legend>Ollama</legend>
   <label>
     Server URL
-    <input type="text" value={settings.ollamaUrl} onchange={(e) => setOllamaUrl(e.currentTarget.value)} />
+    <input
+      type="text"
+      value={settings.ollamaUrl}
+      onchange={(e) => setOllamaUrl(e.currentTarget.value)}
+    />
   </label>
   <p class="note">
-    {ollama.error ? `✗ ${ollama.error}` : `✓ ${ollama.models.length} models available`}
+    {ollama.error
+      ? `✗ ${ollama.error}`
+      : `✓ ${ollama.models.length} models available`}
   </p>
 </fieldset>

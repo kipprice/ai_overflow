@@ -1,13 +1,13 @@
 <!-- Inline text field for renaming a context: Enter or blur saves, Escape cancels. -->
 <script lang="ts">
-  import { untrack } from 'svelte';
-  import { renameTopic } from '$lib/state/naming';
-  import { topicLabel } from '$lib/topic-label';
-  import type { Topic } from '$lib/types';
+  import { renameTopic } from "$lib/state/naming";
+  import { topicName } from "$lib/topic-label";
+  import type { Topic } from "$lib/types";
+  import { untrack } from "svelte";
 
   let { topic, onDone }: { topic: Topic; onDone: () => void } = $props();
   // Start from the current name; later changes to the topic shouldn't overwrite what's typed.
-  let value = $state(untrack(() => topicLabel(topic)));
+  let value = $state(untrack(() => topicName(topic)));
   let done = false;
 
   /** Saves (or discards) once, then leaves edit mode. */
@@ -19,10 +19,10 @@
   }
 
   function onkeydown(event: KeyboardEvent) {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       event.preventDefault();
       finish(true);
-    } else if (event.key === 'Escape') {
+    } else if (event.key === "Escape") {
       // Keep Escape from reaching the window, where it would cancel a streaming answer.
       event.stopPropagation();
       finish(false);
@@ -35,6 +35,8 @@
   }
 </script>
 
+<!----------------------------------------------------------------------------->
+
 <input
   type="text"
   bind:value
@@ -43,6 +45,8 @@
   use:selectAll
   aria-label="Context name"
 />
+
+<!----------------------------------------------------------------------------->
 
 <style>
   input {

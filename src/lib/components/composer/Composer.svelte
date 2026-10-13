@@ -1,8 +1,9 @@
 <!-- Message input at the bottom of the feed, with slash-command suggestions. -->
 <script lang="ts">
-  import { turn } from '$lib/state/chat.svelte';
-  import { ComposerState } from './composer-state.svelte';
-  import SlashMenu from './SlashMenu.svelte';
+  import { turn } from "$lib/state/chat.svelte";
+  import { notice } from "$lib/state/notice.svelte";
+  import { ComposerState } from "./composer-state.svelte";
+  import SlashMenu from "./SlashMenu.svelte";
 
   const MAX_HEIGHT_PX = 240;
   const composer = new ComposerState();
@@ -12,10 +13,12 @@
     void composer.text;
     const el = composer.textarea;
     if (!el) return;
-    el.style.height = 'auto';
+    el.style.height = "auto";
     el.style.height = `${Math.min(el.scrollHeight, MAX_HEIGHT_PX)}px`;
   });
 </script>
+
+<!----------------------------------------------------------------------------->
 
 <svelte:window onkeydown={(e) => composer.onWindowKeydown(e)} />
 
@@ -40,11 +43,18 @@
   <p class="hint">
     {#if turn.requestId}
       Generating… <kbd>Esc</kbd> to stop and edit
+    {:else if notice.text}
+      {notice.text}
     {:else}
-      <kbd>Enter</kbd> send · <kbd>Shift+Enter</kbd> new line · <kbd>/clear</kbd> new context
+      <kbd>Enter</kbd> send · <kbd>Shift+Enter</kbd> new line ·
+      <kbd>/clear</kbd>
+      new context ·
+      <kbd>@resolved</kbd> answer it yourself
     {/if}
   </p>
 </div>
+
+<!----------------------------------------------------------------------------->
 
 <style>
   .composer {

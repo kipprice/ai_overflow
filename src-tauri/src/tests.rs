@@ -1,7 +1,7 @@
-//! Unit tests for the small shared helpers: theme cleaning and NDJSON buffering.
+//! Unit tests for the small shared helpers: reply cleaning and NDJSON buffering.
 
 use crate::ollama::ndjson::LineBuffer;
-use crate::theme;
+use crate::{resolution, theme};
 
 #[test]
 fn theme_strips_decoration() {
@@ -10,8 +10,43 @@ fn theme_strips_decoration() {
 }
 
 #[test]
+fn theme_strips_quotes_from_behind_a_label() {
+    // The label has to go before the quotes are a balanced pair to strip.
+    assert_eq!(theme::clean("Topic: \"Session Resume Bug\"").unwrap(), "Session Resume Bug");
+    assert_eq!(theme::clean("**Topic:** Session Resume Bug").unwrap(), "Session Resume Bug");
+}
+
+#[test]
 fn theme_rejects_empty_replies() {
     assert!(theme::clean("  \n ** ").is_err());
+}
+
+#[test]
+fn resolution_collapses_to_one_line() {
+    let cleaned = resolution::clean("Summary: Pass `--fork-session`\nso the resume never\nmutates.");
+    assert_eq!(cleaned.unwrap(), "Pass `--fork-session` so the resume never mutates.");
+}
+
+#[test]
+fn resolution_keeps_flags_and_code_spans_intact() {
+    // A leading `-` is a bullet only when whitespace follows it, never a flag's own dash.
+    let flag = resolution::clean("--fork-session keeps the parent session intact.");
+    assert_eq!(flag.unwrap(), "--fork-session keeps the parent session intact.");
+    // A lone backtick closes an inline-code span; stripping it would leave it unbalanced.
+    let span = resolution::clean("Summary: Pass the flag `--fork-session`");
+    assert_eq!(span.unwrap(), "Pass the flag `--fork-session`");
+    // A real bullet still goes.
+    assert_eq!(resolution::clean("- Use `--fork-session`").unwrap(), "Use `--fork-session`");
+}
+
+#[test]
+fn resolution_strips_quotes_from_behind_a_label() {
+    assert_eq!(resolution::clean("Summary: \"Pass the flag\"").unwrap(), "Pass the flag");
+}
+
+#[test]
+fn resolution_rejects_empty_replies() {
+    assert!(resolution::clean("\n  ## \n").is_err());
 }
 
 #[test]

@@ -1,19 +1,29 @@
-<!-- Footer for an exchange: which model answered, and any error. -->
+<!-- Footer for an exchange: who answered it, and any error. -->
 <script lang="ts">
-  import { CLAUDE_MODELS } from '$lib/models';
-  import type { Exchange } from '$lib/types';
+  import { CLAUDE_MODELS } from "$lib/models";
+  import type { Exchange } from "$lib/types";
 
   let { exchange }: { exchange: Exchange } = $props();
 
-  const modelLabel = $derived(CLAUDE_MODELS.find((m) => m.id === exchange.model)?.label ?? exchange.model);
+  const modelLabel = $derived(
+    CLAUDE_MODELS.find((m) => m.id === exchange.model)?.label ?? exchange.model,
+  );
 </script>
 
-{#if exchange.status === 'error'}
+<!----------------------------------------------------------------------------->
+
+{#if exchange.status === "error"}
   <p class="error">⚠ {exchange.error}</p>
 {/if}
 <p class="meta">
-  {modelLabel}{exchange.effort ? ` · ${exchange.effort}` : ''}
+  {#if exchange.selfAnswered}
+    Answered by you
+  {:else}
+    {modelLabel}{exchange.effort ? ` · ${exchange.effort}` : ""}
+  {/if}
 </p>
+
+<!----------------------------------------------------------------------------->
 
 <style>
   .meta {

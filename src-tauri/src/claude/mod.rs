@@ -7,9 +7,11 @@ pub mod chat;
 mod cli;
 mod failure;
 mod line_events;
+mod oneshot;
 mod parser;
 #[cfg(test)]
 mod parser_tests;
+pub mod resolution;
 pub mod status;
 pub mod theme;
 mod tool_detail;

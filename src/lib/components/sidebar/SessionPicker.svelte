@@ -1,14 +1,23 @@
 <!-- Dropdown of all sessions (named by date and top themes) plus a button to start a new one. -->
 <script lang="ts">
-  import { sessionName } from '$lib/state/session-name';
-  import { sessionsNewestFirst, startSession, switchSession } from '$lib/state/sessions';
-  import { store } from '$lib/state/store.svelte';
-  import { sessionTopics } from '$lib/state/topics';
+  import { sessionName } from "$lib/state/session-name";
+  import {
+    sessionsNewestFirst,
+    startSession,
+    switchSession,
+  } from "$lib/state/sessions";
+  import { store } from "$lib/state/store.svelte";
+  import { sessionTopics } from "$lib/state/topics";
 
   const options = $derived(
-    sessionsNewestFirst().map((s) => ({ id: s.id, name: sessionName(s, sessionTopics(s.id)) })),
+    sessionsNewestFirst().map((s) => ({
+      id: s.id,
+      name: sessionName(s, sessionTopics(s.id)),
+    })),
   );
 </script>
+
+<!----------------------------------------------------------------------------->
 
 <div class="picker">
   <select
@@ -20,10 +29,17 @@
       <option value={option.id}>{option.name}</option>
     {/each}
   </select>
-  <button class="icon-button new" onclick={startSession} title="New session" aria-label="New session">
+  <button
+    class="icon-button new"
+    onclick={startSession}
+    title="New session"
+    aria-label="New session"
+  >
     +
   </button>
 </div>
+
+<!----------------------------------------------------------------------------->
 
 <style>
   .picker {

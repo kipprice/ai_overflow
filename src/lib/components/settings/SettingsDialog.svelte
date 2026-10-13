@@ -1,7 +1,7 @@
 <!-- Modal settings: theme extraction model and harness connection details. -->
 <script lang="ts">
-  import ConnectionSettings from './ConnectionSettings.svelte';
-  import ThemeSettings from './ThemeSettings.svelte';
+  import ConnectionSettings from "./ConnectionSettings.svelte";
+  import ThemeSettings from "./ThemeSettings.svelte";
 
   let { open = $bindable(false) }: { open: boolean } = $props();
   let dialog = $state<HTMLDialogElement>();
@@ -12,16 +12,24 @@
   });
 </script>
 
+<!----------------------------------------------------------------------------->
+
 <dialog bind:this={dialog} onclose={() => (open = false)}>
   <header>
     <h2>Settings</h2>
-    <button class="icon-button" onclick={() => (open = false)} aria-label="Close">×</button>
+    <button
+      class="icon-button"
+      onclick={() => (open = false)}
+      aria-label="Close">×</button
+    >
   </header>
   {#if open}
     <ThemeSettings />
     <ConnectionSettings />
   {/if}
 </dialog>
+
+<!----------------------------------------------------------------------------->
 
 <style>
   dialog {

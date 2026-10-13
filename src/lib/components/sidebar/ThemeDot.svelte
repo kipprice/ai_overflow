@@ -1,9 +1,9 @@
 <!-- One context as a dot; hovering shows its theme in a popover, clicking opens it. -->
 <script lang="ts">
-  import { store } from '$lib/state/store.svelte';
-  import { selectTopic } from '$lib/state/topics';
-  import { topicLabel } from '$lib/topic-label';
-  import type { Topic } from '$lib/types';
+  import { store } from "$lib/state/store.svelte";
+  import { selectTopic } from "$lib/state/topics";
+  import { topicLabel } from "$lib/topic-label";
+  import type { Topic } from "$lib/types";
 
   let { topic }: { topic: Topic } = $props();
   let dot = $state<HTMLButtonElement>();
@@ -23,10 +23,13 @@
   }
 </script>
 
+<!----------------------------------------------------------------------------->
+
 <button
   bind:this={dot}
   class="dot"
   class:current={topic.id === store.data.currentTopicId}
+  class:resolved={topic.resolution?.state === "active"}
   onclick={() => selectTopic(topic.id)}
   onmouseenter={show}
   onmouseleave={hide}
@@ -36,7 +39,11 @@
 >
   <span></span>
 </button>
-<div bind:this={popover} popover="manual" class="popover">{topicLabel(topic)}</div>
+<div bind:this={popover} popover="manual" class="popover">
+  {topicLabel(topic)}
+</div>
+
+<!----------------------------------------------------------------------------->
 
 <style>
   .dot {
@@ -63,6 +70,12 @@
 
   .current span {
     background: var(--accent);
+  }
+
+  /* A resolved context reads as settled even in the collapsed rail. */
+  .resolved:not(.current) span {
+    background: none;
+    box-shadow: inset 0 0 0 2px var(--accent);
   }
 
   .popover {

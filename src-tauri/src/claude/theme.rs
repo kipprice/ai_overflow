@@ -1,8 +1,7 @@
-//! Theme extraction via a minimal, tool-less Claude CLI call.
+//! Theme extraction via a one-shot Claude CLI call.
 
-use super::cli;
+use super::oneshot;
 use crate::theme;
-use serde_json::Value;
 
 /// Asks a (cheap) Claude model for a short label for a context, from its first question.
 ///
@@ -22,22 +21,8 @@ pub async fn claude_theme(
     model: String,
     claude_path: Option<String>,
 ) -> Result<String, String> {
-    let mut cmd = cli::command(claude_path.as_deref())?;
-    cmd.current_dir(std::env::temp_dir()).args(cli::theme_args(&model));
-    let child = cli::spawn_with_input(cmd, &theme::user_prompt(&text)).await?;
-    let output = child.wait_with_output().await.map_err(|e| e.to_string())?;
-    let reply = parse_reply(&output.stdout, &output.stderr)?;
+    let prompt = theme::user_prompt(&text);
+    let reply =
+        oneshot::ask(theme::SYSTEM_PROMPT, &prompt, &model, claude_path.as_deref()).await?;
     theme::clean(&reply)
-}
-
-/// Extracts the reply text from the CLI's `--output-format json` result.
-fn parse_reply(stdout: &[u8], stderr: &[u8]) -> Result<String, String> {
-    let v: Value = serde_json::from_slice(stdout).map_err(|_| {
-        format!("Theme extraction failed: {}", String::from_utf8_lossy(stderr).trim())
-    })?;
-    let result = v["result"].as_str().unwrap_or_default().to_string();
-    if v["is_error"].as_bool().unwrap_or(false) {
-        return Err(format!("Theme extraction failed: {result}"));
-    }
-    Ok(result)
 }

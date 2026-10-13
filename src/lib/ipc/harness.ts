@@ -66,3 +66,18 @@ export function extractTheme(settings: Settings, question: string) {
   }
   return invoke<string>('claude_theme', { text: question, model: settings.themeClaudeModel, claudePath: settings.claudePath || null });
 }
+
+/**
+ * Asks the configured theme model to say, in a sentence, how a question was resolved. Uses
+ * the same cheap model as theme extraction because both are short, one-shot helper calls.
+ * @param settings - supplies the theme harness and model.
+ * @param question - the question that was asked.
+ * @param accepted - the answer text the user accepted as the solution.
+ * @returns the resolution summary.
+ */
+export function requestResolutionSummary(settings: Settings, question: string, accepted: string) {
+  if (settings.themeHarness === 'ollama') {
+    return invoke<string>('ollama_resolution', { baseUrl: settings.ollamaUrl, model: settings.themeOllamaModel, question, accepted });
+  }
+  return invoke<string>('claude_resolution', { question, accepted, model: settings.themeClaudeModel, claudePath: settings.claudePath || null });
+}

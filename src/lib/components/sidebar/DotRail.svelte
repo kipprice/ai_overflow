@@ -1,18 +1,27 @@
 <!-- Compact sidebar for narrow windows: a new-session button and one dot per context. -->
 <script lang="ts">
-  import { startSession } from '$lib/state/sessions';
-  import { sessionTopics } from '$lib/state/topics';
-  import ThemeDot from './ThemeDot.svelte';
+  import { startSession } from "$lib/state/sessions";
+  import { sessionTopics } from "$lib/state/topics";
+  import ThemeDot from "./ThemeDot.svelte";
 
   const topics = $derived(sessionTopics());
 </script>
 
-<button class="icon-button new" onclick={startSession} title="New session" aria-label="New session">+</button>
+<!----------------------------------------------------------------------------->
+
+<button
+  class="icon-button new"
+  onclick={startSession}
+  title="New session"
+  aria-label="New session">+</button
+>
 <nav>
   {#each topics as topic (topic.id)}
     <ThemeDot {topic} />
   {/each}
 </nav>
+
+<!----------------------------------------------------------------------------->
 
 <style>
   .new {

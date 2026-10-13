@@ -1,6 +1,7 @@
 import { tick } from 'svelte';
 import { matchCommands, slashCommands } from '$lib/commands';
 import { cancel, send, turn } from '$lib/state/chat.svelte';
+import { clearNotice } from '$lib/state/notice.svelte';
 import { store } from '$lib/state/store.svelte';
 
 /** State and keyboard behaviour for the message composer. */
@@ -18,10 +19,11 @@ export class ComposerState {
     return matchCommands(this.text, commands);
   });
 
-  /** Resets suggestion state after the user edits the text. */
+  /** Resets suggestion state, and clears any notice, after the user edits the text. */
   onInput() {
     this.dismissed = false;
     this.selected = 0;
+    clearNotice();
   }
 
   /**
