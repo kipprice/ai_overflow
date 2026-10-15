@@ -11,6 +11,7 @@
   import { refreshOllamaModels } from "$lib/state/ollama.svelte";
   import { resumePendingSummaries } from "$lib/state/resolution-summary";
   import { loadStore, store } from "$lib/state/store.svelte";
+  import { resumePendingTags } from "$lib/state/tagging";
   import { onMount } from "svelte";
 
   let settingsOpen = $state(false);
@@ -24,6 +25,7 @@
   onMount(async () => {
     await loadStore();
     resumePendingThemes();
+    resumePendingTags();
     resumePendingSummaries();
     void refreshOllamaModels();
   });

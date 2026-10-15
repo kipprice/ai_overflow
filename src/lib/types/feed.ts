@@ -1,4 +1,5 @@
 import type { Resolution } from './resolution';
+import type { Tag, TagStatus } from './tag';
 
 /** The backend that answers questions. */
 export type Harness = 'claude' | 'ollama';
@@ -26,6 +27,8 @@ export interface Exchange {
   error?: string;
   /** Set when the user wrote the answer themselves, so no model was asked. */
   selfAnswered?: boolean;
+  /** How tagging its context from this exchange went; absent if it never ran. */
+  tagging?: TagStatus;
 }
 
 /**
@@ -48,6 +51,9 @@ export interface Topic {
   resolution?: Resolution;
   /** Context this one continues, when it was started by forking a resolved question. */
   forkedFromId?: string;
+  tags: Tag[];
+  /** Labels the user removed. They stay removed: tagging never puts them back. */
+  removedTags: string[];
 }
 
 /** A group of topics shown together in the sidebar. */

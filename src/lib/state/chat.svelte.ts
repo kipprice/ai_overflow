@@ -4,11 +4,13 @@ import { ollamaThink } from '$lib/models';
 import type { Exchange, Topic } from '$lib/types';
 import { applyEvent } from './apply-event';
 import { contextExchanges } from './forking';
-import { runLocalCommand } from './local-commands';
 import { nameTopic } from './naming';
 import { newExchange } from './new-exchange';
+import { readOutgoing } from './outgoing';
 import { discardResolution } from './resolution-state';
 import { claudeCwd, scheduleSave, store } from './store.svelte';
+import { addUserTags } from './tag-edit';
+import { tagExchange } from './tagging';
 import { currentTopic, deleteTopic, startTopic } from './topics';
 import { claudePrompt, isFirstQuestion, ollamaMessages } from './transcript';
 
@@ -18,18 +20,20 @@ export const turn = $state({ requestId: null as string | null });
 let current: { exchange: Exchange; topic: Topic; unsubscribe: () => void } | null = null;
 
 /**
- * Sends the composer's text. Text the app handles itself (`/clear`, `@resolved`) never
- * reaches a harness; anything else, including other slash commands, goes to the selected
- * one. The first real question of a context also kicks off naming its theme.
+ * Sends the composer's text. Text the app handles itself (`/clear`, `@resolved`, bare
+ * `#tags`) never reaches a harness; anything else, including other slash commands, goes to
+ * the selected one. The first real question of a context also kicks off naming its theme,
+ * and every answered one, tagging it.
  * @param text - the composer text.
  * @returns true if the text was accepted and the composer should be emptied.
  */
 export async function send(text: string): Promise<boolean> {
-  const question = text.trim();
-  if (!question || turn.requestId) return false;
-  const local = runLocalCommand(question);
-  if (local !== 'none') return local === 'accepted';
+  if (!text.trim() || turn.requestId) return false;
+  const outgoing = readOutgoing(text.trim());
+  if (outgoing.kind === 'handled') return outgoing.accepted;
+  const { question, labels } = outgoing;
   const topic = currentTopic() ?? startTopic();
+  addUserTags(topic, labels);
   // The theme is named from this context's own first question, but the model is sent the
   // whole conversation, which for a fork reaches back into the context it continues.
   const own = [...topic.exchanges];
@@ -84,8 +88,9 @@ function startTurn(requestId: string, question: string, prior: Exchange[], topic
   return claudeSend(requestId, prompt, settings, claudeCwd(), topic.claudeSessionId);
 }
 
-/** Stops listening for the current turn and persists the result. */
+/** Stops listening for the current turn, tags it if it was answered, and persists the result. */
 function finishTurn() {
+  if (current) void tagExchange(current.topic, current.exchange);
   current?.unsubscribe();
   current = null;
   turn.requestId = null;

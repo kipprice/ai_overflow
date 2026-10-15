@@ -7,4 +7,5 @@ pub mod models;
 pub(crate) mod ndjson;
 mod oneshot;
 pub mod resolution;
+pub mod tags;
 pub mod theme;

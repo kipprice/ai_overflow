@@ -3,7 +3,8 @@
 <script lang="ts">
   import { nameTopic } from "$lib/state/naming";
   import { store } from "$lib/state/store.svelte";
-  import { deleteTopic, selectTopic } from "$lib/state/topics";
+  import { selectTopic } from "$lib/state/context";
+  import { deleteTopic } from "$lib/state/topics";
   import { topicLabel } from "$lib/topic-label";
   import type { Topic } from "$lib/types";
   import ThemeRename from "./ThemeRename.svelte";

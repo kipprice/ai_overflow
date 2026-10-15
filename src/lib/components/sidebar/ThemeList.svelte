@@ -1,6 +1,8 @@
-<!-- The current session's contexts, newest first, listed by theme; clicking one opens it. -->
+<!-- The current session's contexts, newest first, listed by theme under an Ask Question
+     button; clicking one opens it. -->
 <script lang="ts">
   import { sessionTopics } from "$lib/state/topics";
+  import AskQuestion from "./AskQuestion.svelte";
   import ThemeItem from "./ThemeItem.svelte";
 
   const topics = $derived(sessionTopics());
@@ -9,6 +11,7 @@
 <!----------------------------------------------------------------------------->
 
 <nav>
+  <AskQuestion />
   {#each topics as topic (topic.id)}
     <ThemeItem {topic} />
   {:else}

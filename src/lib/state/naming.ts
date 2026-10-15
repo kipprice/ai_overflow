@@ -1,4 +1,4 @@
-import { extractTheme } from '$lib/ipc/harness';
+import { extractTheme } from '$lib/ipc/helpers';
 import type { Topic } from '$lib/types';
 import { scheduleSave, store } from './store.svelte';
 import { isSlashCommand } from './transcript';

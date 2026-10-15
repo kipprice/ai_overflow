@@ -1,9 +1,10 @@
-<!-- Message input at the bottom of the feed, with slash-command suggestions. -->
+<!-- Message input at the bottom of the feed, suggesting slash commands, tags and
+     `@resolved` as they are typed. -->
 <script lang="ts">
+  import SuggestList from "$lib/components/common/SuggestList.svelte";
   import { turn } from "$lib/state/chat.svelte";
   import { notice } from "$lib/state/notice.svelte";
   import { ComposerState } from "./composer-state.svelte";
-  import SlashMenu from "./SlashMenu.svelte";
 
   const MAX_HEIGHT_PX = 240;
   const composer = new ComposerState();
@@ -23,11 +24,12 @@
 <svelte:window onkeydown={(e) => composer.onWindowKeydown(e)} />
 
 <div class="composer">
-  {#if composer.suggestions.length}
-    <SlashMenu
-      items={composer.suggestions}
-      selected={composer.selected}
-      onPick={(command) => composer.submit(`/${command}`)}
+  {#if composer.menu.trigger}
+    <SuggestList
+      items={composer.menu.trigger.items}
+      selected={composer.menu.selected}
+      onPick={(item) => composer.menu.pick(item)}
+      left={24}
     />
   {/if}
   <!-- svelte-ignore a11y_autofocus -->
@@ -36,7 +38,9 @@
     bind:value={composer.text}
     oninput={() => composer.onInput()}
     onkeydown={(e) => composer.onKeydown(e)}
-    placeholder="Ask anything, or type / for commands"
+    onkeyup={() => composer.syncCaret()}
+    onclick={() => composer.syncCaret()}
+    placeholder="Ask anything — / for commands, # to tag"
     rows="1"
     autofocus
   ></textarea>
@@ -49,6 +53,7 @@
       <kbd>Enter</kbd> send · <kbd>Shift+Enter</kbd> new line ·
       <kbd>/clear</kbd>
       new context ·
+      <kbd>#tag</kbd> tag it ·
       <kbd>@resolved</kbd> answer it yourself
     {/if}
   </p>

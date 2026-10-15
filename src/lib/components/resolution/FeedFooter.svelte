@@ -8,7 +8,8 @@
     editOwnAnswer,
     reopenResolution,
   } from "$lib/state/resolution-state";
-  import { currentTopic, forkContext, newContext } from "$lib/state/topics";
+  import { forkContext, newContext } from "$lib/state/context";
+  import { currentTopic } from "$lib/state/topics";
   import FooterNotice from "./FooterNotice.svelte";
   import ResolutionBar from "./ResolutionBar.svelte";
 

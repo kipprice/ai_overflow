@@ -1,5 +1,5 @@
-//! AI Overflow backend: exposes the Claude and Ollama harnesses, theme extraction and
-//! feed persistence to the Svelte frontend as Tauri commands.
+//! AI Overflow backend: exposes the Claude and Ollama harnesses, the helper calls that label
+//! and tag a context, and feed persistence to the Svelte frontend as Tauri commands.
 
 mod claude;
 mod env;
@@ -9,6 +9,7 @@ mod ollama;
 mod requests;
 mod resolution;
 mod storage;
+mod tags;
 #[cfg(test)]
 mod tests;
 mod text;
@@ -27,12 +28,14 @@ pub fn run() {
             requests::cancel_request,
             claude::chat::claude_send,
             claude::theme::claude_theme,
+            claude::tags::claude_tags,
             claude::resolution::claude_resolution,
             claude::status::claude_status,
             ollama::chat::ollama_chat,
             ollama::models::ollama_models,
             ollama::models::ollama_model_info,
             ollama::theme::ollama_theme,
+            ollama::tags::ollama_tags,
             ollama::resolution::ollama_resolution,
             storage::load_data,
             storage::save_data,

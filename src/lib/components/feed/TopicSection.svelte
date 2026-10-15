@@ -1,7 +1,8 @@
-<!-- The current context: its theme heading, a reopened question's former resolution, then
-     each exchange. A standing resolution isn't shown here — it is pinned below the feed. -->
+<!-- The current context: its theme heading and tags, a reopened question's former resolution,
+     then each exchange. A standing resolution isn't shown here — it is pinned below the feed. -->
 <script lang="ts">
   import PastResolution from "$lib/components/resolution/PastResolution.svelte";
+  import TagRow from "$lib/components/tags/TagRow.svelte";
   import { discardResolution } from "$lib/state/resolution-state";
   import { topicLabel } from "$lib/topic-label";
   import type { Acceptance, Exchange, Topic } from "$lib/types";
@@ -34,6 +35,7 @@
     <span>{topicLabel(topic)}</span>
     <time>{started}</time>
   </h2>
+  <TagRow {topic} />
   {#if reopened}
     <PastResolution
       resolution={reopened}

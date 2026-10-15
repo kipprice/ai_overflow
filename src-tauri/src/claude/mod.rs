@@ -13,5 +13,6 @@ mod parser;
 mod parser_tests;
 pub mod resolution;
 pub mod status;
+pub mod tags;
 pub mod theme;
 mod tool_detail;

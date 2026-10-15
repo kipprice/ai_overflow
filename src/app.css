@@ -22,6 +22,11 @@
   --danger: #b91c1c;
   --dot-inactive: rgba(0, 0, 0, 0.22);
   --code-bg: #f1efe9;
+  /* One hue per tag facet, shown as a dot on each tag. */
+  --facet-language: #2563eb;
+  --facet-tool: #c2410c;
+  --facet-concept: #7c3aed;
+  --facet-domain: #047857;
   --radius: 8px;
   --font: "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
     sans-serif;
@@ -46,6 +51,10 @@
   --danger: #f87171;
   --dot-inactive: rgba(255, 255, 255, 0.35);
   --code-bg: #26251f;
+  --facet-language: #60a5fa;
+  --facet-tool: #fb923c;
+  --facet-concept: #a78bfa;
+  --facet-domain: #34d399;
   color-scheme: dark;
 }
 

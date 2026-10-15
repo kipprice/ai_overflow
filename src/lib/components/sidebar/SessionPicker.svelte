@@ -1,20 +1,13 @@
 <!-- Dropdown of all sessions (named by date and top themes) plus a button to start a new one. -->
 <script lang="ts">
-  import { sessionName } from "$lib/state/session-name";
   import {
-    sessionsNewestFirst,
+    sessionChoices,
     startSession,
     switchSession,
   } from "$lib/state/sessions";
   import { store } from "$lib/state/store.svelte";
-  import { sessionTopics } from "$lib/state/topics";
 
-  const options = $derived(
-    sessionsNewestFirst().map((s) => ({
-      id: s.id,
-      name: sessionName(s, sessionTopics(s.id)),
-    })),
-  );
+  const options = $derived(sessionChoices());
 </script>
 
 <!----------------------------------------------------------------------------->

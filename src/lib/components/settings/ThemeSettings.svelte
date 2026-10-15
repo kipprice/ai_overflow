@@ -1,5 +1,5 @@
-<!-- Chooses which harness and model handle the cheap helper calls: naming a context, and
-     summarising an answer accepted as a resolution. -->
+<!-- Chooses which harness and model handle the cheap helper calls: naming a context, tagging
+     it, and summarising an answer accepted as a resolution. -->
 <script lang="ts">
   import { CLAUDE_MODELS, HARNESSES } from "$lib/models";
   import { ollama } from "$lib/state/ollama.svelte";
@@ -14,8 +14,9 @@
 <fieldset>
   <legend>Helper model</legend>
   <p class="note">
-    A cheap model that labels each context with a short theme, and sums up in
-    one line the answers you accept as resolutions.
+    A cheap model that labels each context with a short theme, tags it with
+    the languages, tools and concepts it covers, and sums up in one line the
+    answers you accept as resolutions.
   </p>
   <label>
     Harness

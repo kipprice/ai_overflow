@@ -1,7 +1,8 @@
 import { setNotice } from './notice.svelte';
 import { type MarkedResolution, readResolvedMarker } from './resolved-marker';
 import { manualAnswer, selfAnswer } from './self-answer';
-import { currentTopic, newContext, startTopic } from './topics';
+import { newContext } from './context';
+import { currentTopic, startTopic } from './topics';
 
 /**
  * What the app did with composer text: `none` means it is a question for the harness after

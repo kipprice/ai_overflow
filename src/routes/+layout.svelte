@@ -8,6 +8,7 @@
   import type { Snippet } from "svelte";
   import "../app.css";
   import "../styles/buttons.css";
+  import "../styles/overlays.css";
 
   let { children }: { children: Snippet } = $props();
 </script>

@@ -1,7 +1,7 @@
 //! Unit tests for the small shared helpers: reply cleaning and NDJSON buffering.
 
 use crate::ollama::ndjson::LineBuffer;
-use crate::{resolution, theme};
+use crate::{resolution, tags, theme};
 
 #[test]
 fn theme_strips_decoration() {
@@ -47,6 +47,39 @@ fn resolution_strips_quotes_from_behind_a_label() {
 #[test]
 fn resolution_rejects_empty_replies() {
     assert!(resolution::clean("\n  ## \n").is_err());
+}
+
+#[test]
+fn tags_read_facet_and_label_from_each_line() {
+    let parsed = tags::clean("language: Rust\n- tool: Tauri\n**concept:** lifetimes").unwrap();
+    let pairs: Vec<_> = parsed.iter().map(|t| (t.facet.as_str(), t.label.as_str())).collect();
+    assert_eq!(pairs, [("language", "rust"), ("tool", "tauri"), ("concept", "lifetimes")]);
+}
+
+#[test]
+fn tags_file_invented_facets_under_concept() {
+    let parsed = tags::clean("framework: svelte").unwrap();
+    assert_eq!((parsed[0].facet.as_str(), parsed[0].label.as_str()), ("concept", "svelte"));
+}
+
+#[test]
+fn tags_skip_commentary_but_keep_the_list_under_it() {
+    // A bare word is taken as a label; a sentence without a facet is not a tag.
+    let parsed = tags::clean("Here are the tags for this exchange:\nrust\ntool: cargo").unwrap();
+    let labels: Vec<_> = parsed.iter().map(|t| t.label.as_str()).collect();
+    assert_eq!(labels, ["rust", "cargo"]);
+}
+
+#[test]
+fn tags_drop_duplicates_and_cap_the_list() {
+    let parsed = tags::clean("tool: tauri\nconcept: tauri\na\nb\nc\nd\ne").unwrap();
+    let labels: Vec<_> = parsed.iter().map(|t| t.label.as_str()).collect();
+    assert_eq!(labels, ["tauri", "a", "b", "c", "d"]);
+}
+
+#[test]
+fn tags_reject_replies_with_nothing_usable() {
+    assert!(tags::clean("I could not identify any tags here.").is_err());
 }
 
 #[test]

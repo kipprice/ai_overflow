@@ -1,0 +1,42 @@
+/* Overlays shared by several components, or created outside any component's markup (see
+   `rail-tip.ts`), so they can't be styled with scoped styles. */
+
+/* A centred modal dialog, as for search and sessions in the narrow-window rail. */
+.modal {
+  width: min(440px, 90vw);
+  max-height: 70vh;
+  margin-top: 12vh;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-sidebar);
+  color: var(--text);
+}
+
+.modal[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal::backdrop {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* The label beside a button in the collapsed sidebar rail. */
+.rail-tip {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  transform: translateY(-50%);
+  max-width: 260px;
+  padding: 4px 9px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-raised);
+  color: var(--text);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}

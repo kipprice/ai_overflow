@@ -58,6 +58,9 @@ export function restoreData(json: string | null): AppData {
     if (!topic.theme && topic.themeStatus !== 'failed') topic.themeStatus = 'pending';
     // Resolutions saved before questions could be reopened all still stand.
     if (topic.resolution) topic.resolution.state ??= 'active';
+    // Contexts saved before tagging start untagged; each exchange can be autotagged by hand.
+    topic.tags ??= [];
+    topic.removedTags ??= [];
   }
   for (const exchange of data.topics.flatMap((t) => t.exchanges)) {
     if (exchange.status === 'streaming') {

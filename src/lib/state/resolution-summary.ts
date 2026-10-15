@@ -1,4 +1,4 @@
-import { requestResolutionSummary } from '$lib/ipc/harness';
+import { requestResolutionSummary } from '$lib/ipc/helpers';
 import type { Topic } from '$lib/types';
 import { scheduleSave, store } from './store.svelte';
 

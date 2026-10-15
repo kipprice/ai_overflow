@@ -1,8 +1,8 @@
 /**
  * Answers the user writes themselves with `@resolved`: a question answered in the same
  * message, or a note on the question already open. Neither is sent to a harness, and neither
- * answer is run through a model — only the context's theme is, since that is about the
- * question. Both join the feed, so the conversation keeps the whole story.
+ * answer is rewritten by a model — the helper model only labels them, naming the context's
+ * theme and tagging it. Both join the feed, so the conversation keeps the whole story.
  */
 
 import type { Exchange, Topic } from '$lib/types';
@@ -10,6 +10,7 @@ import { nameTopic } from './naming';
 import { selfAnsweredExchange } from './new-exchange';
 import { resolveManually, resolveWithOwnAnswer } from './resolutions';
 import { scheduleSave } from './store.svelte';
+import { tagExchange } from './tagging';
 import { currentTopic, startTopic } from './topics';
 import { isFirstQuestion } from './transcript';
 
@@ -23,6 +24,7 @@ export function selfAnswer(question: string, answer: string) {
   const own = [...topic.exchanges];
   const exchange = appendOwnAnswer(topic, question, answer);
   if (isFirstQuestion(own, question)) void nameTopic(topic);
+  void tagExchange(topic, exchange);
   resolveWithOwnAnswer(exchange.id, answer);
 }
 
@@ -41,6 +43,7 @@ export function manualAnswer(topic: Topic, note: string) {
   const exchange = note ? appendOwnAnswer(topic, '', note) : undefined;
   resolveManually(topic, note, exchange?.id);
   if (exchange && openedByTheNote) void nameTopic(topic);
+  if (exchange) void tagExchange(topic, exchange);
 }
 
 /** Adds a finished, user-written exchange to the end of a context. */

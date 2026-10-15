@@ -39,40 +39,12 @@ export function startTopic(): Topic {
     exchanges: [],
     claudeSessionId: parent?.claudeSessionId,
     forkedFromId: parent?.id,
+    tags: [],
+    removedTags: [],
   });
   const topic = store.data.topics[store.data.topics.length - 1];
   store.data.currentTopicId = topic.id;
   return topic;
-}
-
-/** Starts a fresh context (the /clear command); the next question begins a new topic. */
-export function newContext() {
-  store.data.currentTopicId = null;
-  store.data.forkFromTopicId = null;
-  scheduleSave();
-}
-
-/**
- * Leaves a resolved question settled and sets up a follow-up that continues from it. The
- * next question opens a new context carrying this one's conversation.
- * @param topic - the context to continue from.
- */
-export function forkContext(topic: Topic) {
-  store.data.currentTopicId = null;
-  store.data.forkFromTopicId = topic.id;
-  scheduleSave();
-}
-
-/**
- * Shows a context in the feed; the next question continues it. Opening a context is a choice
- * of what to continue, so it also disarms a fork left pending — otherwise the next question
- * would quietly inherit an unrelated context's session and history.
- * @param topicId - the topic to open.
- */
-export function selectTopic(topicId: string) {
-  store.data.currentTopicId = topicId;
-  store.data.forkFromTopicId = null;
-  scheduleSave();
 }
 
 /**
